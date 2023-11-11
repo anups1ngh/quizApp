@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 import 'quiz_brain.dart';
-
-QuizBrain quizBrain = QuizBrain();
 
 void main() => runApp(Quizzler());
 
@@ -28,13 +27,15 @@ class QuizPage extends StatefulWidget {
 }
 
 class _QuizPageState extends State<QuizPage> {
+  QuizBrain quizBrain = QuizBrain();
   List<Widget> scoreKeeper = [];
-
-  int questionNumber = 0;
-
+  bool isEnable = true;
   void checkAndUpdate(bool userAnswer) {
-    bool correctAnswer = quizBrain.getAnswer(questionNumber);
-    if (scoreKeeper.length >= 16) scoreKeeper.clear();
+    if (quizBrain.getQuestionNumAndBankLength()[0] >=
+        quizBrain.getQuestionNumAndBankLength()[1] - 1) {
+      isEnable = false;
+    }
+    bool correctAnswer = quizBrain.getAnswer();
     setState(() {
       if (userAnswer == correctAnswer) {
         scoreKeeper.add(
@@ -51,8 +52,7 @@ class _QuizPageState extends State<QuizPage> {
           ),
         );
       }
-      questionNumber++;
-      questionNumber = questionNumber % quizBrain.getQuestionBankLength();
+      quizBrain.nextQuestion();
     });
   }
 
@@ -68,7 +68,7 @@ class _QuizPageState extends State<QuizPage> {
             padding: EdgeInsets.all(10.0),
             child: Center(
               child: Text(
-                quizBrain.getQuestion(questionNumber),
+                quizBrain.getQuestion(),
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 25.0,
@@ -87,10 +87,12 @@ class _QuizPageState extends State<QuizPage> {
                 primary: Colors.white,
                 backgroundColor: Colors.green,
               ),
-              onPressed: () {
-                //The user picked true.
-                checkAndUpdate(true);
-              },
+              onPressed: isEnable
+                  ? () {
+                      //The user picked true.
+                      checkAndUpdate(true);
+                    }
+                  : null,
               child: Text(
                 'True',
                 style: TextStyle(
@@ -108,10 +110,12 @@ class _QuizPageState extends State<QuizPage> {
               style: TextButton.styleFrom(
                 backgroundColor: Colors.red,
               ),
-              onPressed: () {
-                //The user picked false.
-                checkAndUpdate(false);
-              },
+              onPressed: isEnable
+                  ? () {
+                      //The user picked false.
+                      checkAndUpdate(false);
+                    }
+                  : null,
               child: Text(
                 'False',
                 style: TextStyle(
