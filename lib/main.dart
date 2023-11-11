@@ -31,13 +31,35 @@ class _QuizPageState extends State<QuizPage> {
   List<Widget> scoreKeeper = [];
   bool isEnable = true;
   void checkAndUpdate(bool userAnswer) {
-    if (quizBrain.getQuestionNumAndBankLength()[0] >=
-        quizBrain.getQuestionNumAndBankLength()[1] - 1) {
-      isEnable = false;
+    if (quizBrain.isFinished()) {
+      Alert(
+        context: context,
+        title: "Finished!",
+        desc:
+            "You\'ve reached the end of the quiz.\n your score is ${quizBrain.rightAnswer} / ${quizBrain.questionBankLength}",
+        buttons: [
+          DialogButton(
+            child: Text(
+              "Restart",
+              style: TextStyle(color: Colors.white, fontSize: 20),
+            ),
+            onPressed: () {
+              setState(() {
+                quizBrain.resetGame();
+                scoreKeeper.clear();
+                isEnable = true;
+              });
+              Navigator.pop(context);
+            },
+            width: 120,
+          )
+        ],
+      ).show();
     }
     bool correctAnswer = quizBrain.getAnswer();
     setState(() {
       if (userAnswer == correctAnswer) {
+        quizBrain.rightAnswer++;
         scoreKeeper.add(
           Icon(
             Icons.check,
