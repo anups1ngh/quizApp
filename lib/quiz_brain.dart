@@ -46,5 +46,6 @@ class QuizBrain {
 
   void resetGame() {
     _questionNumber = 0;
+    rightAnswer = 0;
   }
 }

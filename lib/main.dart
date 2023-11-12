@@ -8,6 +8,7 @@ class Quizzler extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      title: 'Quizzler',
       home: Scaffold(
         backgroundColor: Colors.grey.shade900,
         body: SafeArea(
@@ -31,31 +32,6 @@ class _QuizPageState extends State<QuizPage> {
   List<Widget> scoreKeeper = [];
   bool isEnable = true;
   void checkAndUpdate(bool userAnswer) {
-    if (quizBrain.isFinished()) {
-      Alert(
-        context: context,
-        title: "Finished!",
-        desc:
-            "You\'ve reached the end of the quiz.\n your score is ${quizBrain.rightAnswer} / ${quizBrain.questionBankLength}",
-        buttons: [
-          DialogButton(
-            child: Text(
-              "Restart",
-              style: TextStyle(color: Colors.white, fontSize: 20),
-            ),
-            onPressed: () {
-              setState(() {
-                quizBrain.resetGame();
-                scoreKeeper.clear();
-                isEnable = true;
-              });
-              Navigator.pop(context);
-            },
-            width: 120,
-          )
-        ],
-      ).show();
-    }
     bool correctAnswer = quizBrain.getAnswer();
     setState(() {
       if (userAnswer == correctAnswer) {
@@ -73,6 +49,31 @@ class _QuizPageState extends State<QuizPage> {
             color: Colors.red,
           ),
         );
+      }
+      if (quizBrain.isFinished()) {
+        Alert(
+          context: context,
+          title: "Finished!",
+          desc:
+              "You\'ve reached the end of the quiz.\n your score is ${quizBrain.rightAnswer} / ${quizBrain.questionBankLength}",
+          buttons: [
+            DialogButton(
+              child: Text(
+                "Restart",
+                style: TextStyle(color: Colors.white, fontSize: 20),
+              ),
+              onPressed: () {
+                setState(() {
+                  quizBrain.resetGame();
+                  scoreKeeper.clear();
+                  isEnable = true;
+                });
+                Navigator.pop(context);
+              },
+              width: 120,
+            )
+          ],
+        ).show();
       }
       quizBrain.nextQuestion();
     });
